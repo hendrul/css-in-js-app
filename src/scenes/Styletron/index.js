@@ -1,8 +1,8 @@
-import React from 'react';
-import { StyletronProvider } from 'styletron-react';
-import Styletron from 'styletron-client';
+import React from "react";
+import { StyletronProvider } from "styletron-react";
+import Styletron from "styletron-client";
 
-import Page from '../../components/Page';
+import Page from "../../components/Page";
 
 let renderer = false;
 let styletron = null;
@@ -14,10 +14,10 @@ export default () => {
       github="rtsao/styletron"
       Provider={({ children }) => {
         if (!renderer) {
-          const styleSheet = document.createElement('style');
+          const styleSheet = document.createElement("style");
           document.head.appendChild(styleSheet);
           styletron = new Styletron([styleSheet], {
-            prefix: '_',
+            prefix: "_"
           });
 
           renderer = true;
@@ -30,12 +30,16 @@ export default () => {
         );
       }}
       load={onLoad => {
-        require.ensure(['./Block', './DifferentBlocks', './Probe'], () => {
-          const block = require('./Block').default;
-          const differentBlocks = require('./DifferentBlocks').default;
-          const probe = require('./Probe').default;
-
-          onLoad({ block, differentBlocks, probe });
+        Promise.all([
+          import("./Block"),
+          import("./DifferentBlocks"),
+          import("./Probe")
+        ]).then(([block, differentBlocks, probe]) => {
+          onLoad({
+            block: block.default,
+            differentBlocks: differentBlocks.default,
+            probe: probe.default
+          });
         });
       }}
     />

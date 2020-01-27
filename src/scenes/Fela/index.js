@@ -1,7 +1,7 @@
-import React from 'react';
-import { createRenderer } from 'fela';
-import { Provider } from 'react-fela';
-import Page from '../../components/Page';
+import React from "react";
+import { createRenderer } from "fela";
+import { Provider } from "react-fela";
+import Page from "../../components/Page";
 
 let renderer = null;
 let mountNode = null;
@@ -14,10 +14,10 @@ export default () => {
       Provider={({ children }) => {
         if (!renderer) {
           renderer = createRenderer({
-            selectorPrefix: '__',
+            selectorPrefix: "__"
           });
 
-          mountNode = document.createElement('style');
+          mountNode = document.createElement("style");
           document.head.appendChild(mountNode);
         }
 
@@ -28,12 +28,16 @@ export default () => {
         );
       }}
       load={onLoad => {
-        require.ensure(['./Block', './DifferentBlocks', './Probe'], () => {
-          const block = require('./Block').default;
-          const differentBlocks = require('./DifferentBlocks').default;
-          const probe = require('./Probe').default;
-
-          onLoad({ block, differentBlocks, probe });
+        Promise.all([
+          import("./Block"),
+          import("./DifferentBlocks"),
+          import("./Probe")
+        ]).then(([block, differentBlocks, probe]) => {
+          onLoad({
+            block: block.default,
+            differentBlocks: differentBlocks.default,
+            probe: probe.default
+          });
         });
       }}
     />

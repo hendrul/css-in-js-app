@@ -1,7 +1,7 @@
-import React from 'react';
-import { JssProvider } from 'react-jss';
-import Page from '../../components/Page';
-import { jss } from './jss';
+import React from "react";
+import { JssProvider } from "react-jss";
+import Page from "../../components/Page";
+import { jss } from "./jss";
 
 export default () => {
   return (
@@ -12,12 +12,16 @@ export default () => {
         return <JssProvider jss={jss}>{children}</JssProvider>;
       }}
       load={onLoad => {
-        require.ensure(['./Block', './DifferentBlocks', './Probe'], () => {
-          const block = require('./Block').default;
-          const differentBlocks = require('./DifferentBlocks').default;
-          const probe = require('./Probe').default;
-
-          onLoad({ block, differentBlocks, probe });
+        Promise.all([
+          import("./Block"),
+          import("./DifferentBlocks"),
+          import("./Probe")
+        ]).then(([block, differentBlocks, probe]) => {
+          onLoad({
+            block: block.default,
+            differentBlocks: differentBlocks.default,
+            probe: probe.default
+          });
         });
       }}
     />

@@ -1,5 +1,5 @@
-import React from 'react';
-import Page from '../../components/Page';
+import React from "react";
+import Page from "../../components/Page";
 
 export default () => {
   return (
@@ -7,12 +7,16 @@ export default () => {
       title="StyledComponents"
       github="styled-components/styled-components"
       load={onLoad => {
-        require.ensure(['./Block', './DifferentBlocks', './Probe'], () => {
-          const block = require('./Block').default;
-          const differentBlocks = require('./DifferentBlocks').default;
-          const probe = require('./Probe').default;
-
-          onLoad({ block, differentBlocks, probe });
+        Promise.all([
+          import("./Block"),
+          import("./DifferentBlocks"),
+          import("./Probe")
+        ]).then(([block, differentBlocks, probe]) => {
+          onLoad({
+            block: block.default,
+            differentBlocks: differentBlocks.default,
+            probe: probe.default
+          });
         });
       }}
     />
